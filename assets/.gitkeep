@@ -1,0 +1,3 @@
+# Textures, sounds, and fonts go here.
+# The build copies this folder next to the executable, so load with paths
+# relative to the binary, e.g. LoadTexture("assets/player.png").
