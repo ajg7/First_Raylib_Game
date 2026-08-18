@@ -12,7 +12,6 @@ public:
         EndTextureMode();
     }
 
-    // Delete copy and move semantics to enforce strict RAII scope-bound ownership
     ScopedTextureMode(const ScopedTextureMode&) = delete;
     ScopedTextureMode& operator=(const ScopedTextureMode&) = delete;
     ScopedTextureMode(ScopedTextureMode&&) = delete;

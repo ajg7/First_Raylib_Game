@@ -12,7 +12,6 @@ public:
         EndDrawing();
     }
 
-    // Delete copy and move semantics to enforce strict RAII scope-bound ownership
     ScopedDrawing(const ScopedDrawing&) = delete;
     ScopedDrawing& operator=(const ScopedDrawing&) = delete;
     ScopedDrawing(ScopedDrawing&&) = delete;
