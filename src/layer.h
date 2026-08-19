@@ -2,6 +2,7 @@
 
 #include "config.h"
 #include "raylib.h"
+#include "animation.h"
 
 struct Layer 
 {
@@ -19,4 +20,10 @@ struct Layer
         
         DrawTexturePro(texture, src, dst, {}, 0.0f, WHITE);
     }
+
+    static Rectangle frameRect(const Animation& anim, const int frameWidth, const int frameHeight, const bool facingLeft) {
+    const float x = facingLeft ? static_cast<float>(frameWidth) * (anim.frameIndex + 1) : static_cast<float>(frameWidth) * anim.frameIndex;
+    const float w = facingLeft ? -static_cast<float>(frameWidth) : static_cast<float>(frameWidth);
+    return Rectangle{ x, 0.0f, w, static_cast<float>(frameHeight) };
+}
 };

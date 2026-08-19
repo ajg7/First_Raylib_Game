@@ -7,6 +7,8 @@
 #include "scopedWindow.h"
 #include "scopedRenderTexture.h"
 #include "scopedLayers.h"
+#include "animation.h"
+#include "player.h"
 
 #include <cstdlib>
 
@@ -22,6 +24,8 @@ int main(void)
 
     // Background Layers
     const ScopedLayers backgroundLayers{Config::Assets::Backdrop::All};
+
+    Player player{Player::load(Vector2{Config::Virtual::WidthF * 0.5f - 64.0f, static_cast<float>(Config::World::GroundLineY) - 128.0f})};
 
     FrameRateMonitor frameRateMonitor{};
 
@@ -42,7 +46,11 @@ int main(void)
             for (const auto& layer : backgroundLayers) {
                 layer.draw();
             }
-            
+
+            // Update and Draw Player
+            player.update(frameRateMonitor.SIM_DT);
+            player.draw();
+
             // Draw Debug Overlays
             DrawLine(0, Config::World::GroundLineY, Config::Virtual::Width, Config::World::GroundLineY, RED);
             frameRateMonitor.drawFrameRateText();

@@ -65,3 +65,15 @@ namespace Config::Assets::Backdrop {
     // Consolidated array of all backdrop layer definitions in render order (back-to-front)
     constexpr std::array All{ Bg, RailWall, ColumnsFloor, Wires, Train };
 }
+
+namespace Config::Assets::Scientist {
+    const char* idlePath{"assets/scientist/idle.png"};
+    const char* walkPath{"assets/scientist/walk.png"};
+    constexpr int frameWidth{128};
+    constexpr int frameHeight{128};
+    constexpr int idleFrameCount{6};
+    constexpr int walkFrameCount{12};
+    constexpr double idleFrameDuration{0.15};
+    constexpr double walkFrameDuration{0.08};
+    constexpr float moveSpeed{60.0f};
+}
