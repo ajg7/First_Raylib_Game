@@ -19,18 +19,13 @@ struct Player {
     Texture2D specialTexture;
     Animation specialAnim;
     bool shooting{false};
-    Texture2D crouchFireTexture;
-    Animation crouchFireAnim;
-    bool crouching{false};
     bool bulletSpawnedThisShot{false};
     double fireCooldownRemaining{0.0};
 
     Player(const Vector2 startPosition, const Texture2D idle, const Texture2D walk, const Texture2D special,
-           const Texture2D crouchFire, const Animation idleAnimation, const Animation walkAnimation,
-           const Animation specialAnimation, const Animation crouchFireAnimation)
+           const Animation idleAnimation, const Animation walkAnimation, const Animation specialAnimation)
         : position(startPosition), idleTexture(idle), walkTexture(walk), specialTexture(special),
-          crouchFireTexture(crouchFire), idleAnim(idleAnimation), walkAnim(walkAnimation),
-          specialAnim(specialAnimation), crouchFireAnim(crouchFireAnimation) {}
+          idleAnim(idleAnimation), walkAnim(walkAnimation), specialAnim(specialAnimation) {}
 
     static Player load(const Vector2 startPosition) {
         return Player{
@@ -38,11 +33,9 @@ struct Player {
             LoadTexture(Config::Assets::Scientist::idlePath),
             LoadTexture(Config::Assets::Scientist::walkPath),
             LoadTexture(Config::Assets::Scientist::specialPath),
-            LoadTexture(Config::Assets::Scientist::crouchFirePath),
             Animation{Config::Assets::Scientist::idleFrameCount, Config::Assets::Scientist::idleFrameDuration},
             Animation{Config::Assets::Scientist::walkFrameCount, Config::Assets::Scientist::walkFrameDuration},
-            Animation{Config::Assets::Scientist::specialFrameCount, Config::Assets::Scientist::specialFrameDuration},
-            Animation{Config::Assets::Scientist::crouchFireFrameCount, Config::Assets::Scientist::crouchFireFrameDuration}
+            Animation{Config::Assets::Scientist::specialFrameCount, Config::Assets::Scientist::specialFrameDuration}
         };
     }
 
@@ -50,7 +43,6 @@ struct Player {
         UnloadTexture(idleTexture);
         UnloadTexture(walkTexture);
         UnloadTexture(specialTexture);
-        UnloadTexture(crouchFireTexture);
     }
 
     Player(const Player&) = delete;
@@ -62,7 +54,6 @@ struct Player {
         const bool movingLeft = IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A);
         const bool movingRight = IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D);
         const bool moving = movingLeft != movingRight;
-        const bool crouchInput = IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S);
 
         if (movingLeft) facingLeft = true;
         if (movingRight) facingLeft = false;
@@ -76,11 +67,7 @@ struct Player {
 
         if (fireCooldownRemaining > 0.0) fireCooldownRemaining -= simDt;
 
-        if (!shooting && !crouching && crouchInput && IsKeyDown(KEY_SPACE) && fireCooldownRemaining <= 0.0) {
-            crouching = true;
-            bulletSpawnedThisShot = false;
-            crouchFireAnim.reset();
-        } else if (!shooting && !crouching && IsKeyDown(KEY_SPACE) && fireCooldownRemaining <= 0.0) {
+        if (!shooting && IsKeyDown(KEY_SPACE) && fireCooldownRemaining <= 0.0) {
             shooting = true;
             bulletSpawnedThisShot = false;
             specialAnim.reset();
@@ -88,29 +75,7 @@ struct Player {
 
         std::optional<Bullet> spawned;
 
-        if (crouching) {
-            const int previousFrame = crouchFireAnim.frameIndex;
-            crouchFireAnim.advance(simDt);
-
-            if (!bulletSpawnedThisShot && crouchFireAnim.frameIndex == Config::Assets::Scientist::crouchFireFlashFrame) {
-                bulletSpawnedThisShot = true;
-                const float dstY = position.y + static_cast<float>(Config::Assets::Scientist::frameHeight - Config::Assets::Scientist::crouchFireFrameHeight);
-                const float muzzleX = position.x + (facingLeft ? 0.0f : static_cast<float>(Config::Assets::Scientist::crouchFireFrameWidth));
-                const float muzzleY = dstY + static_cast<float>(Config::Assets::Scientist::crouchFireFrameHeight) * 0.45f;
-                const float dir = facingLeft ? -1.0f : 1.0f;
-                spawned = Bullet{
-                    Vector2{muzzleX, muzzleY},
-                    Vector2{dir * Config::Gameplay::bulletSpeed, 0.0f}
-                };
-            }
-
-            if (previousFrame == Config::Assets::Scientist::crouchFireFrameCount - 1 && crouchFireAnim.frameIndex == 0) {
-                crouching = false;
-                fireCooldownRemaining = Config::Assets::Scientist::fireCooldown;
-                idleAnim.reset();
-                walkAnim.reset();
-            }
-        } else if (shooting) {
+        if (shooting) {
             const int previousFrame = specialAnim.frameIndex;
             specialAnim.advance(simDt);
 
@@ -146,17 +111,7 @@ struct Player {
     void draw() const {
         const Texture2D* texture = &idleTexture;
         const Animation* anim = &idleAnim;
-        int frameW = Config::Assets::Scientist::frameWidth;
-        int frameH = Config::Assets::Scientist::frameHeight;
-
-        const bool crouchInput = IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S);
-
-        if (crouching || (!shooting && crouchInput)) {
-            texture = &crouchFireTexture;
-            anim = &crouchFireAnim;
-            frameW = Config::Assets::Scientist::crouchFireFrameWidth;
-            frameH = Config::Assets::Scientist::crouchFireFrameHeight;
-        } else if (shooting) {
+        if (shooting) {
             texture = &specialTexture;
             anim = &specialAnim;
         } else if (wasMoving) {
@@ -164,12 +119,11 @@ struct Player {
             anim = &walkAnim;
         }
 
-        const float dstY = position.y + static_cast<float>(Config::Assets::Scientist::frameHeight - frameH);
-        const Rectangle src = Layer::frameRect(*anim, frameW, frameH, facingLeft);
+        const Rectangle src = Layer::frameRect(*anim, Config::Assets::Scientist::frameWidth, Config::Assets::Scientist::frameHeight, facingLeft);
         const Rectangle dst{
-            position.x, dstY,
-            static_cast<float>(frameW),
-            static_cast<float>(frameH)
+            position.x, position.y,
+            static_cast<float>(Config::Assets::Scientist::frameWidth),
+            static_cast<float>(Config::Assets::Scientist::frameHeight)
         };
         DrawTexturePro(*texture, src, dst, {}, 0.0f, WHITE);
     }

@@ -83,12 +83,6 @@ namespace Config::Assets::Scientist {
     constexpr double specialFrameDuration{0.07};
     constexpr int specialFlashFrame{2};
     constexpr double fireCooldown{0.25};
-    const char* crouchFirePath{"assets/scientist/crouch_fire.png"};
-    constexpr int crouchFireFrameWidth{96};
-    constexpr int crouchFireFrameHeight{64};
-    constexpr int crouchFireFrameCount{7};
-    constexpr double crouchFireFrameDuration{0.08};
-    constexpr int crouchFireFlashFrame{1};
 }
 
 namespace Config::Gameplay {
