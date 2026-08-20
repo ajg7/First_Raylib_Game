@@ -28,6 +28,8 @@ namespace Config::Virtual {
 // Global world layout measurements within the virtual coordinate space
 namespace Config::World {
     constexpr int GroundLineY{131};
+    constexpr int ArenaMinX{0};
+    constexpr int ArenaMaxX{Config::Virtual::Width};
 }
 
 // Viewport scaling and letterboxing math to fit the virtual canvas onto the physical window
@@ -69,6 +71,7 @@ namespace Config::Assets::Backdrop {
 namespace Config::Assets::Scientist {
     const char* idlePath{"assets/scientist/idle.png"};
     const char* walkPath{"assets/scientist/walk.png"};
+    const char* specialPath{"assets/scientist/special.png"};
     constexpr int frameWidth{128};
     constexpr int frameHeight{128};
     constexpr int idleFrameCount{6};
@@ -76,4 +79,31 @@ namespace Config::Assets::Scientist {
     constexpr double idleFrameDuration{0.15};
     constexpr double walkFrameDuration{0.08};
     constexpr float moveSpeed{60.0f};
+    constexpr int specialFrameCount{14};
+    constexpr double specialFrameDuration{0.07};
+    constexpr int specialFlashFrame{2};
+    constexpr double fireCooldown{0.25};
+    const char* crouchFirePath{"assets/scientist/crouch_fire.png"};
+    constexpr int crouchFireFrameWidth{224};
+    constexpr int crouchFireFrameHeight{148};
+    constexpr int crouchFireFrameCount{7};
+    constexpr double crouchFireFrameDuration{0.08};
+    constexpr int crouchFireFlashFrame{1};
+}
+
+namespace Config::Gameplay {
+    constexpr float bulletSpeed{300.0f};
+}
+
+namespace Config::Assets::Zombie {
+    const char* walkPath{"assets/zombie/walk.png"};
+    const char* deadPath{"assets/zombie/dead.png"};
+    constexpr int frameWidth{96};
+    constexpr int frameHeight{96};
+    constexpr int walkFrameCount{10};
+    constexpr double walkFrameDuration{0.1};
+    constexpr int deadFrameCount{5};
+    constexpr double deadFrameDuration{0.12};
+    constexpr float moveSpeed{25.0f};
+    constexpr int startHp{3};
 }

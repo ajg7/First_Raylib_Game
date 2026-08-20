@@ -23,14 +23,18 @@ public:
     static constexpr double SIM_HZ{60.0};
     static constexpr double SIM_DT{1.0 / SIM_HZ};
 
-    // Accumulates delta time and steps the simulation counter in fixed increments
-    void update(const double deltaTime) noexcept {
+    // Accumulates delta time and returns how many fixed-size simulation steps
+    // the caller should run this frame (0, 1, or several, depending on framerate).
+    int update(const double deltaTime) noexcept {
         m_accumulator += deltaTime;
+        int steps = 0;
         while (m_accumulator >= SIM_DT) {
+            ++steps;
             ++m_simTicks;
             m_accumulator -= SIM_DT;
         }
         ++m_renderFrames;
+        return steps;
     }
 
     // Renders the current tick and frame stats to the screen
