@@ -149,7 +149,9 @@ struct Player {
         int frameW = Config::Assets::Scientist::frameWidth;
         int frameH = Config::Assets::Scientist::frameHeight;
 
-        if (crouching) {
+        const bool crouchInput = IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S);
+
+        if (crouching || (!shooting && crouchInput)) {
             texture = &crouchFireTexture;
             anim = &crouchFireAnim;
             frameW = Config::Assets::Scientist::crouchFireFrameWidth;
