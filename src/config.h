@@ -89,9 +89,14 @@ namespace Config::Gameplay {
     constexpr float bulletSpeed{300.0f};
 }
 
+namespace Config::Assets::Bullet {
+    constexpr int bulletWidth{4};
+    constexpr int bulletHeight{2};
+}
+
 namespace Config::Assets::Zombie {
-    const char* walkPath{"assets/zombie/walk.png"};
-    const char* deadPath{"assets/zombie/dead.png"};
+    const char* walkPath{"assets/zombie/wild/walk.png"};
+    const char* deadPath{"assets/zombie/wild/dead.png"};
     constexpr int frameWidth{96};
     constexpr int frameHeight{96};
     constexpr int walkFrameCount{10};

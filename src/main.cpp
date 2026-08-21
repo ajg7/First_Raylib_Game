@@ -11,6 +11,7 @@
 #include "player.h"
 #include "bullet.h"
 #include "zombie.h"
+#include "collision.h"
 #include <vector>
 
 #include <cstdlib>
@@ -18,7 +19,7 @@
 int main(void)
 {
     // Window
-    const ScopedWindow window{Config::Window::Width, Config::Window::Height, "Dazzle's Darkness"};
+    const ScopedWindow window{Config::Window::Width, Config::Window::Height, "Gloom and Utter Darkness"};
     SetTargetFPS(Config::Window::TargetFPS);
 
     // Virtual Canvas
@@ -62,22 +63,24 @@ int main(void)
                 zombie.update(frameRateMonitor.SIM_DT, player.position.x);
 
                 for (auto& bullet : bullets) bullet.update(frameRateMonitor.SIM_DT);
-
+                
                 if (!zombie.dead) {
-                    for (auto it = bullets.begin(); it != bullets.end(); ) {
-                        if (zombie.containsPoint(it->position)) {
+                    const Rectangle target = zombie.expandedBounds(
+                        Config::Assets::Bullet::bulletWidth * 0.5f, Config::Assets::Bullet::bulletHeight * 0.5f
+                    );
+
+                    for (auto it = bullets.begin(); it != bullets.end();) {
+                        if (auto t = sweptAABB(it->prevPosition, it->position, target)) {
                             zombie.takeHit();
                             it = bullets.erase(it);
-                        } else {
-                            ++it;
-                        }
+                        } else ++it;
                     }
                 }
             }
 
             // Draw Bullets, Zombie, and Player
             for (const auto& bullet : bullets) {
-                DrawRectangle(static_cast<int>(bullet.position.x), static_cast<int>(bullet.position.y), 4, 2, YELLOW);
+                DrawRectangle(static_cast<int>(bullet.position.x), static_cast<int>(bullet.position.y), Config::Assets::Bullet::bulletWidth, Config::Assets::Bullet::bulletHeight, YELLOW);
             }
             zombie.draw();
             player.draw();

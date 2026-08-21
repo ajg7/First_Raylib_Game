@@ -49,13 +49,14 @@ struct Zombie {
         };
     }
 
-    // Naive point-in-box test, on purpose — Milestone 2.3 replaces this with a swept test.
-    bool containsPoint(const Vector2 point) const {
+    Rectangle expandedBounds(const float halfWidth, const float halfHeight) const {
         const Rectangle box = bounds();
-        return point.x >= box.x && point.x <= box.x + box.width &&
-               point.y >= box.y && point.y <= box.y + box.height;
+        return Rectangle{
+            box.x - halfWidth, box.y - halfHeight,
+            box.width + 2.0f * halfWidth, box.height + 2.0f * halfHeight
+        };
     }
-
+    
     void takeHit() {
         if (dead) return;
         --hp;
